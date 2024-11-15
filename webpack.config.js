@@ -43,10 +43,13 @@ const extensionConfig = {
 const webviewConfig = {
   target: 'web',
   mode: 'none',
-  entry: './src/webview/index.tsx',
+  entry: {
+    webview: './src/webview/index.tsx',
+    sidebar: './src/webview/sidebar.tsx'
+  },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'webview.js'
+    filename: '[name].js'
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],

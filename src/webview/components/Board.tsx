@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Column } from './Column';
 
+declare const acquireVsCodeApi: () => {
+  postMessage: (message: any) => void;
+  setState: (state: any) => void;
+  getState: () => any;
+};
+
+const vscode = acquireVsCodeApi();
+
 interface BoardColumn {
   id: string;
   name: string;
@@ -11,13 +19,22 @@ export const Board: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Fetch columns from GitHub API
-    setColumns([
-      { id: '1', name: 'To Do' },
-      { id: '2', name: 'In Progress' },
-      { id: '3', name: 'Done' }
-    ]);
-    setLoading(false);
+    const handler = (event: MessageEvent) => {
+      const message = event.data;
+      switch (message.type) {
+        case 'columns':
+          setColumns(message.columns);
+          setLoading(false);
+          break;
+        case 'loadProject':
+          setLoading(true);
+          vscode.postMessage({ command: 'getColumns', projectId: message.projectId });
+          break;
+      }
+    };
+
+    window.addEventListener('message', handler);
+    return () => window.removeEventListener('message', handler);
   }, []);
 
   if (loading) {
@@ -25,7 +42,10 @@ export const Board: React.FC = () => {
   }
 
   return (
-    <div className="flex h-full overflow-x-auto p-4 space-x-4">
+    <div 
+      className="flex h-full overflow-x-auto p-4 space-x-4"
+      onWheel={(e) => e.currentTarget.scrollLeft += e.deltaY}
+    >
       {columns.map(column => (
         <Column key={column.id} name={column.name} />
       ))}

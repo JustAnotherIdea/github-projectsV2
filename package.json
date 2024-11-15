@@ -25,7 +25,7 @@
       "github-projects": [
         {
           "id": "github-projects-boards",
-          "name": "Boards",
+          "name": "Projects",
           "type": "webview"
         }
       ]
@@ -33,9 +33,37 @@
     "commands": [
       {
         "command": "github-projects.openBoard",
-        "title": "Open GitHub Projects Board"
+        "title": "Open Project Board"
+      },
+      {
+        "command": "github-projects.refreshBoards",
+        "title": "Refresh Projects",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "github-projects.logout",
+        "title": "Sign Out of GitHub"
       }
-    ]
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "github-projects.refreshBoards",
+          "when": "view == github-projects-boards",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "GitHub Projects V2",
+      "properties": {
+        "githubProjects.organization": {
+          "type": "string",
+          "description": "GitHub Organization name",
+          "default": ""
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
@@ -72,6 +100,7 @@
   "dependencies": {
     "@octokit/rest": "^19.0.7",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "polka": "^0.5.2"
   }
 }
